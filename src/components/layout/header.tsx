@@ -58,6 +58,11 @@ export function Header() {
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href));
 
+  // Pages whose top section is dark navy → header uses light text until scrolled
+  const darkTop = ["/", "/services/air-cargo", "/services/sea-cargo", "/urgent-shipping", "/shipping-routes"].includes(pathname);
+  const dark = darkTop && !scrolled && !mobileOpen;
+  const linkColor = dark ? "text-paper" : "text-navy-900";
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
@@ -68,7 +73,7 @@ export function Header() {
     >
       <div className="container-site flex h-16 items-center justify-between gap-4 md:h-[4.5rem]">
         <Link href="/" aria-label={`${site.name} — home`} className="shrink-0">
-          <Logo />
+          <Logo light={dark} />
         </Link>
 
         {/* Desktop nav */}
@@ -79,7 +84,7 @@ export function Header() {
               aria-expanded={servicesOpen}
               aria-haspopup="true"
               onClick={() => setServicesOpen((v) => !v)}
-              className="flex items-center gap-1.5 text-[0.8125rem] font-medium tracking-wide text-navy-900 link-underline"
+              className={`flex items-center gap-1.5 text-[0.8125rem] font-medium tracking-wide transition-colors link-underline ${linkColor}`}
               data-active={isActive("/services") || isActive("/urgent-shipping") ? "" : undefined}
             >
               Services
@@ -128,7 +133,7 @@ export function Header() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-[0.8125rem] font-medium tracking-wide text-navy-900 link-underline"
+              className={`text-[0.8125rem] font-medium tracking-wide transition-colors link-underline ${linkColor}`}
               data-active={isActive(l.href) ? "" : undefined}
               aria-current={pathname === l.href ? "page" : undefined}
             >
@@ -142,7 +147,7 @@ export function Header() {
           {hasPhone && tel && (
             <a
               href={tel}
-              className="flex items-center gap-2 font-mono text-xs font-medium tracking-wide text-navy-900 transition-colors hover:text-accent"
+              className={`flex items-center gap-2 font-mono text-xs font-medium tracking-wide transition-colors hover:text-accent ${linkColor}`}
             >
               <Phone className="size-3.5" aria-hidden />
               {site.phone}
@@ -150,7 +155,11 @@ export function Header() {
           )}
           <Link
             href="/get-a-quote"
-            className="bg-navy-900 px-5 py-2.5 text-[0.8125rem] font-semibold tracking-wide text-paper transition-colors hover:bg-accent"
+            className={`px-5 py-2.5 text-[0.8125rem] font-semibold tracking-wide transition-colors ${
+              dark
+                ? "bg-paper text-navy-900 hover:bg-accent hover:text-navy-950"
+                : "bg-navy-900 text-paper hover:bg-accent hover:text-navy-950"
+            }`}
           >
             Get a Quote
           </Link>
@@ -160,7 +169,9 @@ export function Header() {
         <div className="flex items-center gap-2 lg:hidden">
           <Link
             href="/get-a-quote"
-            className="bg-navy-900 px-4 py-2 text-xs font-semibold text-paper"
+            className={`px-4 py-2 text-xs font-semibold transition-colors ${
+              dark ? "bg-paper text-navy-900" : "bg-navy-900 text-paper"
+            }`}
           >
             Get a Quote
           </Link>
@@ -169,7 +180,7 @@ export function Header() {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="grid size-10 place-items-center text-navy-900"
+            className={`grid size-10 place-items-center transition-colors ${linkColor}`}
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
